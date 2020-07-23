@@ -1,7 +1,5 @@
 package com.mercado.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
@@ -82,6 +80,13 @@ public class UsuarioController {
 		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
 	}
 
+	@GetMapping(value = "buscaId/{id}", produces = "application/json")
+	public ResponseEntity<Usuario> buscaPeloId(@PathVariable(value = "id") Long id) {
+		Optional<Usuario> usuario = usuarioRepository.findById(id);
+
+		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+	}
+
 	// Atualiza usuario
 	@PutMapping(value = "/{id}", produces = "application/text")
 	public String atualizar(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
@@ -99,7 +104,7 @@ public class UsuarioController {
 
 			// atualiza usuario
 			usuarioRepository.save(db);
-			return  "Salvo";
+			return "Salvo";
 		} else {
 			throw new RuntimeException("Não foi possivel atualizar o registro");
 		}
