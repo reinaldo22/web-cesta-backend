@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,7 +66,8 @@ public class UsuarioController {
 	}
 
 	// Busca por nome
-	@GetMapping(value = "/buscaNome/{nome}")
+	@GetMapping(value = "/buscaNomeUser/{nome}", produces = "application/json")
+	@CachePut("cacheusuarios")
 	public ResponseEntity<Page<Usuario>> buscaNome(@PathVariable("nome") String nome) throws InterruptedException {
 		PageRequest pageRequest = null;
 		Page<Usuario> list = null;
@@ -81,6 +83,7 @@ public class UsuarioController {
 	}
 
 	@GetMapping(value = "buscaId/{id}", produces = "application/json")
+	@CachePut("cacheusuarios")
 	public ResponseEntity<Usuario> buscaPeloId(@PathVariable(value = "id") Long id) {
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
 
@@ -88,30 +91,34 @@ public class UsuarioController {
 	}
 
 	// Atualiza usuario
-	@PutMapping(value = "/{id}", produces = "application/text")
-	public String atualizar(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
-		Optional<Usuario> updateUsuario = usuarioRepository.findById(id);
+	@PutMapping(value = "/", produces = "application/json")
+	public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
+		Optional<Usuario> updateUsuario = usuarioRepository.findById(usuario.getId());
 
-		if (updateUsuario.isPresent()) {
+		
 			Usuario db = updateUsuario.get();
 
 			// copia as propriedades
 			db.setEmail(usuario.getEmail());
 			db.setLogin(usuario.getLogin());
 			db.setNome(usuario.getNome());
-			db.setRoles(usuario.getRoles());
+			//db.setRoles(usuario.getRoles());
 			db.setSenha(new BCryptPasswordEncoder().encode(usuario.getSenha()));
 
 			// atualiza usuario
-			usuarioRepository.save(db);
-			return "Salvo";
-		} else {
-			throw new RuntimeException("Não foi possivel atualizar o registro");
-		}
-
+			Usuario user = usuarioRepository.save(db);
+			return new ResponseEntity<Usuario>(user, HttpStatus.OK);
+	}
+	@DeleteMapping(value = "/{id}", produces="application/text")
+	public String deletar(@PathVariable(value = "id")Long id) {
+		
+		usuarioRepository.deleteById(id);
+		
+		return "Usuario deletado com sucesso";
 	}
 
 	@GetMapping("/userInfo")
+	@CachePut("cacheusuarios")
 	public UserDetails userInfo(@AuthenticationPrincipal UserDetails user) {
 		return user;
 	}
