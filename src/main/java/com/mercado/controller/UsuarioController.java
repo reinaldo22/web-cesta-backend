@@ -57,9 +57,10 @@ public class UsuarioController {
 
 	// Busca a determinada pagina com a sua numeracao
 	@GetMapping(value = "/page/{pagina}", produces = "application/json")
-	@CachePut("cacheusuarios")
 	public ResponseEntity<Page<Usuario>> paginaUsuario(@PathVariable("pagina") int pagina) throws InterruptedException {
+		
 		PageRequest page = PageRequest.of(pagina, 5, Sort.by("nome"));
+		
 		Page<Usuario> list = usuarioRepository.findAll(page);
 
 		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
@@ -77,7 +78,7 @@ public class UsuarioController {
 			list = usuarioRepository.findAll(pageRequest);
 		} else {
 			pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
-			list = usuarioRepository.findByNamePage(nome, pageRequest);
+			list = usuarioRepository.findUserByNamePage(nome, pageRequest);
 		}
 		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
 	}
@@ -95,25 +96,25 @@ public class UsuarioController {
 	public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
 		Optional<Usuario> updateUsuario = usuarioRepository.findById(usuario.getId());
 
-		
-			Usuario db = updateUsuario.get();
+		Usuario db = updateUsuario.get();
 
-			// copia as propriedades
-			db.setEmail(usuario.getEmail());
-			db.setLogin(usuario.getLogin());
-			db.setNome(usuario.getNome());
-			//db.setRoles(usuario.getRoles());
-			db.setSenha(new BCryptPasswordEncoder().encode(usuario.getSenha()));
+		// copia as propriedades
+		db.setEmail(usuario.getEmail());
+		db.setLogin(usuario.getLogin());
+		db.setNome(usuario.getNome());
+		// db.setRoles(usuario.getRoles());
+		db.setSenha(new BCryptPasswordEncoder().encode(usuario.getSenha()));
 
-			// atualiza usuario
-			Usuario user = usuarioRepository.save(db);
-			return new ResponseEntity<Usuario>(user, HttpStatus.OK);
+		// atualiza usuario
+		Usuario user = usuarioRepository.save(db);
+		return new ResponseEntity<Usuario>(user, HttpStatus.OK);
 	}
-	@DeleteMapping(value = "/{id}", produces="application/text")
-	public String deletar(@PathVariable(value = "id")Long id) {
-		
+
+	@DeleteMapping(value = "/{id}", produces = "application/text")
+	public String deletar(@PathVariable(value = "id") Long id) {
+
 		usuarioRepository.deleteById(id);
-		
+
 		return "Usuario deletado com sucesso";
 	}
 

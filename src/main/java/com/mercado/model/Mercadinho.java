@@ -1,6 +1,6 @@
 package com.mercado.model;
 
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,12 +14,11 @@ public class Mercadinho {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String produto;
-	private BigDecimal preco;
+	private double preco;
 	private String colaborador;
 	private String nomeMercado;
 
-	
-	public Mercadinho(Long id, String produto, BigDecimal preco, String colaborador, String nomeMercado) {
+	public Mercadinho(Long id, String produto, double preco, String colaborador, String nomeMercado) {
 		super();
 		this.id = id;
 		this.produto = produto;
@@ -27,12 +26,15 @@ public class Mercadinho {
 		this.colaborador = colaborador;
 		this.nomeMercado = nomeMercado;
 	}
-	
+
+	public static DecimalFormat arredondar(Double valor) {
+		DecimalFormat decimal = new DecimalFormat("#,##0.00");
+		return decimal;
+	}
 
 	public Mercadinho() {
 		super();
 	}
-
 
 	public Long getId() {
 		return id;
@@ -50,11 +52,13 @@ public class Mercadinho {
 		this.produto = produto;
 	}
 
-	public BigDecimal getPreco() {
+	public double getPreco() {
+
 		return preco;
 	}
 
-	public void setPreco(BigDecimal preco) {
+	public void setPreco(double preco) {
+
 		this.preco = preco;
 	}
 

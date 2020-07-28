@@ -19,15 +19,16 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT u FROM Usuario u WHERE u.nome like %?1%")
 	List<Usuario> findUserByNome(String username);
 
-	default Page<Usuario> findByNamePage(String nome, PageRequest pageRequest) {
+	default Page<Usuario> findUserByNamePage(String nome, PageRequest pageRequest){
 		Usuario usuario = new Usuario();
 		usuario.setNome(nome);
-		ExampleMatcher exampleMatcher = ExampleMatcher.matchingAny().withMatcher("nome",
-				ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
-
+		ExampleMatcher exampleMatcher = ExampleMatcher.matchingAny().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers
+				.contains().ignoreCase());
+		
 		Example<Usuario> example = Example.of(usuario, exampleMatcher);
+		
 		Page<Usuario> retorno = findAll(example, pageRequest);
-
+		
 		return retorno;
 	}
 
