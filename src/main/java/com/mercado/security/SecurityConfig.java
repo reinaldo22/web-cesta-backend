@@ -46,7 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/login").permitAll()
 				.anyRequest().authenticated()
-				.antMatchers(HttpMethod.POST, "/cadastro").permitAll()
 				.and().httpBasic().and().csrf().disable()
 				.addFilter(new CorsConfig())
 				.addFilter(new JwtAuthenticationFilter(authManager))
