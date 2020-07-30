@@ -29,6 +29,7 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
+	
 	@PostMapping(value = "/", produces = "application/json")
 	public ResponseEntity<Usuario> cadastro(@RequestBody Usuario usuario) {
 
