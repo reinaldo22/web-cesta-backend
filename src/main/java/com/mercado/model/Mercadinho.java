@@ -1,11 +1,9 @@
 package com.mercado.model;
 
-import java.text.DecimalFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -20,6 +18,7 @@ public class Mercadinho {
 	private String colaborador;
 	private String nomeMercado;
 
+
 	public Mercadinho(Long id, String produto, double preco, String colaborador, String nomeMercado) {
 		super();
 		this.id = id;
@@ -29,9 +28,12 @@ public class Mercadinho {
 		this.nomeMercado = nomeMercado;
 	}
 
-	public static DecimalFormat arredondar(Double valor) {
-		DecimalFormat decimal = new DecimalFormat("#,##0.00");
-		return decimal;
+	public double getTotal() {
+
+		double soma = 0.0;
+		soma = soma + getPreco();
+
+		return soma;
 	}
 
 	public Mercadinho() {
@@ -79,6 +81,8 @@ public class Mercadinho {
 	public void setNomeMercado(String nomeMercado) {
 		this.nomeMercado = nomeMercado;
 	}
+
+	
 
 	@Override
 	public int hashCode() {
